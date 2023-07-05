@@ -87,6 +87,15 @@ class GetGLMHandle(Process):
     
 global glm_handle
 glm_handle = None
+
+########## 退出本地模型线程，释放显存 ##########
+def exit_chatglm_model():
+    global glm_handle
+    if glm_handle is not None:
+        glm_handle.terminate()
+        glm_handle.join()
+        glm_handle = None
+
 #################################################################################
 def predict_no_ui_long_connection(inputs, llm_kwargs, history=[], sys_prompt="", observe_window=[], console_slience=False):
     """

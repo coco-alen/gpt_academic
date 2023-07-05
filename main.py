@@ -1,4 +1,5 @@
 import os; os.environ['no_proxy'] = '*' # 避免代理网络产生意外污染
+from request_llm.bridge_chatglm import exit_chatglm_model
 
 def main():
     import gradio as gr
@@ -69,6 +70,7 @@ def main():
                     with gr.Row():
                         resetBtn = gr.Button("重置", variant="secondary"); resetBtn.style(size="sm")
                         stopBtn = gr.Button("停止", variant="secondary"); stopBtn.style(size="sm")
+                        releaseBtn = gr.Button("释放本地显存", variant="secondary"); releaseBtn.style(size="sm")
                         clearBtn = gr.Button("清除", variant="secondary", visible=False); clearBtn.style(size="sm")
                     with gr.Row():
                         status = gr.Markdown(f"Tip: 按Enter提交, 按Shift+Enter换行。当前模型: {LLM_MODEL} \n {proxy_info}")
@@ -117,6 +119,7 @@ def main():
                     with gr.Row():
                         resetBtn2 = gr.Button("重置", variant="secondary"); resetBtn2.style(size="sm")
                         stopBtn2 = gr.Button("停止", variant="secondary"); stopBtn2.style(size="sm")
+                        releaseBtn2 = gr.Button("释放", variant="secondary"); releaseBtn2.style(size="sm")
                         clearBtn2 = gr.Button("清除", variant="secondary", visible=False); clearBtn2.style(size="sm")
         # 功能区显示开关与功能区的互动
         def fn_area_visibility(a):
@@ -142,6 +145,10 @@ def main():
         cancel_handles.append(submitBtn2.click(**predict_args))
         resetBtn.click(lambda: ([], [], "已重置"), None, [chatbot, history, status])
         resetBtn2.click(lambda: ([], [], "已重置"), None, [chatbot, history, status])
+        releaseBtn.click(lambda: ([], [], "已释放显存"), None, [chatbot, history, status])
+        releaseBtn2.click(lambda: ([], [], "已释放显存"), None, [chatbot, history, status])
+        releaseBtn.click(exit_chatglm_model)
+        releaseBtn2.click(exit_chatglm_model)
         clearBtn.click(lambda: ("",""), None, [txt, txt2])
         clearBtn2.click(lambda: ("",""), None, [txt, txt2])
         if AUTO_CLEAR_TXT:
